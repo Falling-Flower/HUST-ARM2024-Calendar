@@ -248,7 +248,6 @@ int main() {
     }
 
     // Get fixed screen information
-    struct fb_fix_screeninfo finfo;
     if (ioctl(fbfd, FBIOGET_FSCREENINFO, &finfo)) {
         printf("Error reading fixed information.\n");
         exit(2);
