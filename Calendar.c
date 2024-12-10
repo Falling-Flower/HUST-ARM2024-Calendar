@@ -163,13 +163,6 @@ void Glib_FilledRectangle(int x1,int y1,int x2,int y2,int color)
 	Glib_Line(x1,i,x2,i,color);
 }
 
-void PutPixel(unsigned int x, unsigned int y, unsigned int c) {
-    if (x < vinfo.xres && y < vinfo.yres) {
-        *(fbp + y * vinfo.xres_virtual * 2 + x * 2) = 0x00FF & c;
-        *(fbp + y * vinfo.xres_virtual * 2 + x * 2 + 1) = (0xFF00 & c) >> 8;
-    }
-}
-
 // 计算给定日期是星期几，返回值0-6表示星期日到星期六
 int get_day_of_week(int year, int month, int day) {
     static int t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
