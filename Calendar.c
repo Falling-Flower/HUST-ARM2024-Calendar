@@ -186,18 +186,18 @@ void draw_string(int x, int y, const char *str, unsigned int color) {
 // 打印日历
 void print_calendar(int year, int month, int highlight_day) {
     // 清除之前的日历绘制
-    Glib_FilledRectangle(0, 0, vinfo.xres, vinfo.yres, BLACK_COLOR);
+    Glib_FilledRectangle(0, 0, vinfo.xres, vinfo.yres, WHITE_COLOR);
 
     // 打印月份标题
     char title[20];
     snprintf(title, sizeof(title), "%d-%02d", year, month);
-    draw_string(10, 10, title, WHITE_COLOR);
+    draw_string(10, 10, title, BLUE_COLOR);
 
     // 打印星期标题
     char weekdays[7][4] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 	int i;
     for (i = 0; i < 7; ++i) {
-        draw_string(10 + i*40, 30, weekdays[i], WHITE_COLOR);
+        draw_string(10 + i*40, 30, weekdays[i], BLUE_COLOR);
     }
 
     // 获取该月的第一天是星期几
