@@ -65,7 +65,8 @@ void print_calendar(int year, int month, int highlight_day) {
 
     // 打印星期标题
     char weekdays[7][4] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-    for (int i = 0; i < 7; ++i) {
+	int i;
+    for (i = 0; i < 7; ++i) {
         draw_string(10 + i*40, 30, weekdays[i], WHITE_COLOR);
     }
 
@@ -86,7 +87,8 @@ void print_calendar(int year, int month, int highlight_day) {
     // 打印日期
     int x_offset = start_day * 40 + 10;
     int y_offset = 50;
-    for (int day = 1; day <= days_in_month; ++day) {
+	int day;
+    for (day = 1; day <= days_in_month; ++day) {
         if (x_offset >= vinfo.xres - 30) {
             x_offset = 10;
             y_offset += 20;
