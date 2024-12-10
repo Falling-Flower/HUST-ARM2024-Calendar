@@ -7,6 +7,7 @@
 #include <sys/ioctl.h>
 #include "linuxbmp.h"
 #include <time.h>
+
 #include "iconv.h"
 #include "hzk16.h"
 #include "ascii16x8.h"
@@ -166,47 +167,6 @@ void Glib_FilledRectangle(int x1,int y1,int x2,int y2,int color)
 	Glib_Line(x1,i,x2,i,color);
 }
 
-int code_convert(char *encFrom, char *encTo, char *inbuf, size_t *inlen, char *outbuf, size_t *outlen)
-{
-        /* @param encTo 目标编码方式
-         * @param encFrom 源编码方式
-         * 目的编码, TRANSLIT：遇到无法转换的字符就找相近字符替换
-         *           IGNORE ：遇到无法转换字符跳过
-         */
-        iconv_t cd;
-        size_t ret;
-        char *tmpin = inbuf;
-        char *tmpout = outbuf;
-
-        cd = iconv_open(encTo, encFrom);
-        if (cd==(iconv_t)-1)
-        {
-                perror("iconv_open");
-                return -2;
-        }
-        /* 需要转换的字符串 */
-        printf("inbuf=%s\n", inbuf);
-
-        /* 打印需要转换的字符串的长度 */
-        printf("inlen=%d\n", *inlen);
-
-        ret = iconv(cd, &tmpin, inlen, &tmpout, outlen);
-        if ( ret == -1)
-        {
-                printf ("iconv Error!\n");
-                return -1;
-        }
-        /* 存放转换后的字符串 */
-        printf("outbuf=%s\n", outbuf);
-
-        //存放转换后outbuf剩余的空间
-        printf("outlen=%d\n", *outlen);
-
-        /* 关闭句柄 */
-        iconv_close(cd);
-        return 0;
-}
-
 void lcd_disp_hzk16(int x,int y,char *s,int color)
 {
     char buffer[32];                            /* 32字节的字模缓冲区       */
@@ -267,24 +227,18 @@ int get_day_of_week(int year, int month, int day) {
     return (year + year/4 - year/100 + year/400 + t[month-1] + day) % 7;
 }
 
-// // 绘制单个字符到framebuffer
-// void draw_char(int x, int y, char ch, unsigned int color) {
-//     // 实现简单的ASCII字符绘制，这里省略具体实现
-// 	fb_write_char(fb_fd, x, y, ch, color);
-// }
-
-// // 绘制字符串到framebuffer
-// void draw_string(int x, int y, const char *str, unsigned int color) {
-//     while (*str) {
-//         lcd_disp_ascii16x8(x, y, *str++, color);
-//         x += 8; // 假设每个字符宽度为8像素
-//     }
-// }
 
 // 打印日历
 void print_calendar(int year, int month, int highlight_day) {
     // 清除之前的日历绘制
-    Glib_FilledRectangle(0, 0, vinfo.xres, vinfo.yres, BLACK_COLOR);
+    for(y = 0; y < vinfo.yres; y++)
+        {
+            for(x = 0; x < vinfo.xres; x++)
+            {
+                *(fbp + y * vinfo.xres*2 + x*2) = 0x00;
+                *(fbp + y * vinfo.xres*2 + x*2 +1) = 0x00;
+            }
+        }
 
     // 打印月份标题
     char title[20];
