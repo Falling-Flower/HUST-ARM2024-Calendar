@@ -7,6 +7,7 @@
 #include <sys/ioctl.h>
 #include "linuxbmp.h"
 #include <time.h>
+#include <string.h>
 
 #include "iconv.h"
 #include "hzk16.h"
@@ -231,6 +232,7 @@ int get_day_of_week(int year, int month, int day) {
 // 打印日历
 void print_calendar(int year, int month, int highlight_day) {
     // 清除之前的日历绘制
+	x = 100; y = 100; 
     for(y = 0; y < vinfo.yres; y++)
         {
             for(x = 0; x < vinfo.xres; x++)
