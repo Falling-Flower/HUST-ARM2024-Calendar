@@ -236,6 +236,8 @@ void print_calendar(int year, int month, int highlight_day) {
 
 int main() {
     int fbfd = 0;
+	struct fb_var_screeninfo vinfo;
+    struct fb_fix_screeninfo finfo;
     long int screensize = 0;
 
     // Open the file for reading and writing
