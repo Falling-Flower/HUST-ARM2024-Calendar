@@ -17,7 +17,25 @@
 char *fbp = 0;
 struct fb_var_screeninfo vinfo;
 
-// ... (其他代码保持不变)
+/*
+ * framebuffer application code, the start code of Linux GUI application
+ * compile :
+ *          $/usr/local/arm/2.95.3/bin/arm-linux-gcc -o fbtest fbtest.c
+ *          $cp fbtest /tftpboot/examples
+ * run in target:
+ *          #mount 192.168.1.180:/tftpboot/ /mnt/nfs
+ *          #cd /mnt/nfs/examples
+ *          #./fbtest
+ */
+ 
+void PutPixel(unsigned int x,unsigned int y,unsigned int c)
+{
+    if(x<640 && y<480) {
+    	*(fbp + y * 640*2 + x *2) = 0x00FF&c;
+    	*(fbp + y * 640*2 + x *2 +1) = (0xFF00&c)>>8;
+    }
+}
+
 void Glib_Line(int x1,int y1,int x2,int y2,int color)
 {
 	int dx,dy,e;
