@@ -18,6 +18,125 @@ char *fbp = 0;
 struct fb_var_screeninfo vinfo;
 
 // ... (其他代码保持不变)
+void Glib_Line(int x1,int y1,int x2,int y2,int color)
+{
+	int dx,dy,e;
+	dx=x2-x1; 
+	dy=y2-y1;
+    
+	if(dx>=0)
+	{
+		if(dy >= 0) // dy>=0
+		{
+			if(dx>=dy) // 1/8 octant
+			{
+				e=dy-dx/2;
+				while(x1<=x2)
+				{
+					PutPixel(x1,y1,color);
+					if(e>0){y1+=1;e-=dx;}	
+					x1+=1;
+					e+=dy;
+				}
+			}
+			else		// 2/8 octant
+			{
+				e=dx-dy/2;
+				while(y1<=y2)
+				{
+					PutPixel(x1,y1,color);
+					if(e>0){x1+=1;e-=dy;}	
+					y1+=1;
+					e+=dx;
+				}
+			}
+		}
+		else		   // dy<0
+		{
+			dy=-dy;   // dy=abs(dy)
+
+			if(dx>=dy) // 8/8 octant
+			{
+				e=dy-dx/2;
+				while(x1<=x2)
+				{
+					PutPixel(x1,y1,color);
+					if(e>0){y1-=1;e-=dx;}	
+					x1+=1;
+					e+=dy;
+				}
+			}
+			else		// 7/8 octant
+			{
+				e=dx-dy/2;
+				while(y1>=y2)
+				{
+					PutPixel(x1,y1,color);
+					if(e>0){x1+=1;e-=dy;}	
+					y1-=1;
+					e+=dx;
+				}
+			}
+		}	
+	}
+	else //dx<0
+	{
+		dx=-dx;		//dx=abs(dx)
+		if(dy >= 0) // dy>=0
+		{
+			if(dx>=dy) // 4/8 octant
+			{
+				e=dy-dx/2;
+				while(x1>=x2)
+				{
+					PutPixel(x1,y1,color);
+					if(e>0){y1+=1;e-=dx;}	
+					x1-=1;
+					e+=dy;
+				}
+			}
+			else		// 3/8 octant
+			{
+				e=dx-dy/2;
+				while(y1<=y2)
+				{
+					PutPixel(x1,y1,color);
+					if(e>0){x1-=1;e-=dy;}	
+					y1+=1;
+					e+=dx;
+				}
+			}
+		}
+		else		   // dy<0
+		{
+			dy=-dy;   // dy=abs(dy)
+
+			if(dx>=dy) // 5/8 octant
+			{
+				e=dy-dx/2;
+				while(x1>=x2)
+				{
+					PutPixel(x1,y1,color);
+					if(e>0){y1-=1;e-=dx;}	
+					x1-=1;
+					e+=dy;
+				}
+			}
+			else		// 6/8 octant
+			{
+				e=dx-dy/2;
+				while(y1>=y2)
+				{
+					PutPixel(x1,y1,color);
+					if(e>0){x1-=1;e-=dy;}	
+					y1-=1;
+					e+=dx;
+				}
+			}
+		}	
+	}
+}
+
 void Glib_FilledRectangle(int x1,int y1,int x2,int y2,int color)
 {
     int i;
