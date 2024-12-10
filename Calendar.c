@@ -18,6 +18,13 @@ char *fbp = 0;
 struct fb_var_screeninfo vinfo;
 
 // ... (其他代码保持不变)
+void Glib_FilledRectangle(int x1,int y1,int x2,int y2,int color)
+{
+    int i;
+
+    for(i=y1;i<=y2;i++)
+	Glib_Line(x1,i,x2,i,color);
+}
 
 void PutPixel(unsigned int x, unsigned int y, unsigned int c) {
     if (x < vinfo.xres && y < vinfo.yres) {
