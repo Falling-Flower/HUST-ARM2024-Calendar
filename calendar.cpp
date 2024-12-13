@@ -99,19 +99,11 @@ int dayOfWeek(int year, int month, int day) {
     return (f + 6) % 7; // 0: Saturday, 1: Sunday, ..., 6: Friday
 }
 
-void initLine(){
-	char *line = (char *)malloc(MAX_LINE_LENGTH); // 分配足够的空间
-    if (!line) {
-        fprintf(stderr, "Memory allocation failed\n");
-        return;
-    }
-    line[0] = '\0';
-}
-
 void printCalendar(){
 	int year = 2024;
 	int month = 12;
 	int startDay = dayOfWeek(year,month,1);
+	int days = getDaysInMonth(year, month);
 	int x, y, i;
 	
 	x = 100;
@@ -123,7 +115,12 @@ void printCalendar(){
 	lcd_disp_ascii16x8(x, y, "Sun  Mon  Tue  Wed  Thu  Fri  Sat  ", BLUE_COLOR);
 	y += 20;
 	
-	initLine();
+	char *line = (char *)malloc(MAX_LINE_LENGTH); // 分配足够的空间
+    if (!line) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return;
+    }
+    line[0] = '\0';
 	
 	for (i = 0; i < startDay; i++) {
         strcat(line, "     ");
