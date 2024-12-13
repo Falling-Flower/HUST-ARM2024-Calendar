@@ -116,7 +116,7 @@ int dayOfWeek(int year, int month, int day) {
 void printCalendar(int year,int	month){
 //	int year = 2024;
 //	int month = 12;
-	char string[10];
+	char string[40];
 	int startDay = dayOfWeek(year,month,1);
 	int days = getDaysInMonth(year, month);
 	int x, y, i;
@@ -124,14 +124,14 @@ void printCalendar(int year,int	month){
 	x = 100;
 	y = 100;
 	
-	snprintf(string, 10,"%d",year);
+	snprintf(string, sizeof(string),"%d        %-10s", year, months[month]);
 	
 	printf("%d year of calendar\n",year);
-	lcd_disp_ascii16x8(x+6, y, string, BLUE_COLOR);
-	lcd_disp_ascii16x8(x+13, y,months[month],year, BLUE_COLOR);
+	lcd_disp_ascii16x8(x, y, string, BLUE_COLOR);
+	//lcd_disp_ascii16x8(x+13, y,months[month], BLUE_COLOR);
 	y += 20;
 	lcd_disp_ascii16x8(x, y, "Sun  Mon  Tue  Wed  Thu  Fri  Sat  ", BLUE_COLOR);
-	printf(Sun  Mon  Tue  Wed  Thu  Fri  Sat  );
+	printf("Sun  Mon  Tue  Wed  Thu  Fri  Sat  \n");
 	y += 20;
 	
 	char *line = (char *)malloc(MAX_LINE_LENGTH); // ·ÖÅä×ã¹»µÄ¿Õ¼ä
@@ -157,6 +157,7 @@ void printCalendar(int year,int	month){
             y += 20;
         }    
     }
+    lcd_disp_ascii16x8(x, y, line, BLUE_COLOR);
 }
 
 int main(int argc, char **argv){
