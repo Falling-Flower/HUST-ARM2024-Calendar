@@ -16,6 +16,7 @@
 #define RED_COLOR    0xF800
 #define GREEN_COLOR  0x07E0
 #define BLUE_COLOR   0x001F
+#define MAX_LINE_LENGTH (5 * 7 + 1)
 
 char *months[]=
 {
@@ -33,7 +34,16 @@ char *months[]=
 	"November",
 	"December"
 };
+char *fbp = 0;
+int xmax = 0, ymax = 0;
 
+void PutPixel(unsigned int x,unsigned int y,unsigned int c)
+{
+    if(x<xmax && y<ymax) {
+    	*(fbp + y * xmax*2 + x *2) = 0x00FF&c;
+    	*(fbp + y * xmax*2 + x *2 +1) = (0xFF00&c)>>8;
+    }
+}
 /*****************************************************************************
 // Function name    : lcd_disp_ascii16x8
 // Description      : 在LCD的(x,y)坐标处以colour颜色显示s中的ASCII字符
@@ -89,18 +99,48 @@ int dayOfWeek(int year, int month, int day) {
     return (f + 6) % 7; // 0: Saturday, 1: Sunday, ..., 6: Friday
 }
 
+void initLine(){
+	char *line = (char *)malloc(MAX_LINE_LENGTH); // 分配足够的空间
+    if (!line) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return;
+    }
+    line[0] = '\0';
+}
+
 void printCalendar(){
 	int year = 2024;
 	int month = 12;
-	int x,y;
+	int startDay = dayOfWeek(year,month,1);
+	int x, y, i;
 	
 	x = 100;
 	y = 100;
 	
-	printf("%d year of calendar",year);
+	printf("%d year of calendar\n",year);
 	lcd_disp_ascii16x8(x, y, months[month], BLUE_COLOR);
 	y += 20;
-	lcd_disp_ascii16x8(x, y, "Sun  Mon  Tue  Wed  Thu  Fri  Sat", BLUE_COLOR);
+	lcd_disp_ascii16x8(x, y, "Sun  Mon  Tue  Wed  Thu  Fri  Sat  ", BLUE_COLOR);
+	y += 20;
+	
+	initLine();
+	
+	for (i = 0; i < startDay; i++) {
+        strcat(line, "     ");
+    }
+	int day;
+    for (day = 1; day <= days; day++) {
+    	char dayStr[5];
+    	snprintf(dayStr, sizeof(dayStr), "%3d ", day);
+    	strncat(line, dayStr, MAX_LINE_LENGTH - strlen(line) - 1);
+        printf("%3d ", day);
+        if ((startDay + day) % 7 == 0){
+			lcd_disp_ascii16x8(x, y, line, BLUE_COLOR);
+            printf("\n");
+            line[0] = '\0';
+            y += 20;
+        }    
+    }
 }
 
 int main(int argc, char **argv){
