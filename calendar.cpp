@@ -9,6 +9,7 @@
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 #include <string.h>
+#include <time.h>
 
 #include "iconv.h"
 #include "ascii16x8.h"
@@ -76,6 +77,19 @@ void lcd_disp_ascii16x8(int x,int y,char *s,int color)
     }
 }
 
+void get_current_year_month(int *year, int *month) {
+    // 获取当前日历时间
+    time_t rawtime;
+    struct tm *timeinfo;
+
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+
+    // 将年份和月份赋值给传入的指针参数
+    *year = timeinfo->tm_year + 1900; // tm_year是自1900年以来的年数
+    *month = timeinfo->tm_mon + 1;    // tm_mon是从0开始的月份索引
+}
+
 //判断闰年 
 int isLeapYear(int year) {
     return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
@@ -99,9 +113,10 @@ int dayOfWeek(int year, int month, int day) {
     return (f + 6) % 7; // 0: Saturday, 1: Sunday, ..., 6: Friday
 }
 
-void printCalendar(){
-	int year = 2024;
-	int month = 12;
+void printCalendar(int year,int	month){
+//	int year = 2024;
+//	int month = 12;
+	char string[10];
 	int startDay = dayOfWeek(year,month,1);
 	int days = getDaysInMonth(year, month);
 	int x, y, i;
@@ -109,10 +124,14 @@ void printCalendar(){
 	x = 100;
 	y = 100;
 	
+	snprintf(string, 10,"%d",year);
+	
 	printf("%d year of calendar\n",year);
-	lcd_disp_ascii16x8(x, y, months[month], BLUE_COLOR);
+	lcd_disp_ascii16x8(x+6, y, string, BLUE_COLOR);
+	lcd_disp_ascii16x8(x+13, y,months[month],year, BLUE_COLOR);
 	y += 20;
 	lcd_disp_ascii16x8(x, y, "Sun  Mon  Tue  Wed  Thu  Fri  Sat  ", BLUE_COLOR);
+	printf(Sun  Mon  Tue  Wed  Thu  Fri  Sat  );
 	y += 20;
 	
 	char *line = (char *)malloc(MAX_LINE_LENGTH); // 分配足够的空间
@@ -127,10 +146,10 @@ void printCalendar(){
     }
 	int day;
     for (day = 1; day <= days; day++) {
-    	char dayStr[5];
-    	snprintf(dayStr, sizeof(dayStr), "%3d ", day);
+    	char dayStr[6];
+    	snprintf(dayStr, sizeof(dayStr), "%3d  ", day);
     	strncat(line, dayStr, MAX_LINE_LENGTH - strlen(line) - 1);
-        printf("%3d ", day);
+        printf("%3d  ", day);
         if ((startDay + day) % 7 == 0){
 			lcd_disp_ascii16x8(x, y, line, BLUE_COLOR);
             printf("\n");
@@ -145,7 +164,8 @@ int main(int argc, char **argv){
     struct fb_var_screeninfo vinfo;
     struct fb_fix_screeninfo finfo;
     long int screensize = 0;
-    int k;
+    int year, month;
+    get_current_year_month(&year, &month);
     
     //打开文件读写 
     fbfd = open("/dev/fb0", O_RDWR);
@@ -183,7 +203,14 @@ int main(int argc, char **argv){
     xmax = vinfo.xres;
     ymax = vinfo.yres;
 	
-	printCalendar();
+//	while(1){
+		printCalendar(year, month);
+		printf("Enter year and month (yyyy mm): ");
+    	scanf("%d %d", &year, &month);
+    	memset(fbp,0xff,screensize);
+    	printCalendar(year, month);
+//	}
+//	printCalendar();
 	//lcd_disp_ascii16x8(78,66+18+18, "EIC School,HUST 2020", BLUE_COLOR); 
 	munmap(fbp, screensize);
     close(fbfd);
