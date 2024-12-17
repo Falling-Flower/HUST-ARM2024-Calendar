@@ -170,109 +170,49 @@ void printCalendarlist(int year){
 	x = 50;
 	y = 50;
 	for(m = 1;m <= 12;m++){
+        if(m == 5){
+            x = 380;
+            y = 50;
+        }
+        if(m == 9){
+            x = 720;
+            y = 50;
+        }
         startDay = dayOfWeek(year,m,1);
         days = getDaysInMonth(year, m);
-        if(m<=4){
-            snprintf(string, sizeof(string),"%d        %-10s", year, months[m]);
-            lcd_disp_ascii16x8(x, y, string, BLUE_COLOR);
-            y += 20;
-            lcd_disp_ascii16x8(x, y, "Sun  Mon  Tue  Wed  Thu  Fri  Sat  ", BLUE_COLOR);
-            printf("Sun  Mon  Tue  Wed  Thu  Fri  Sat  \n");
-            y += 20;
-            char *line = (char *)malloc(MAX_LINE_LENGTH); // 分配足够的空间
-            if (!line) {
-                fprintf(stderr, "Memory allocation failed\n");
-                return;
-            }
-            line[0] = '\0';
-        
-            for (i = 0; i < startDay; i++) {
-                strcat(line, "     ");
-            }
-            int day;
-            for (day = 1; day <= days; day++) {
-                char dayStr[6];
-                snprintf(dayStr, sizeof(dayStr), "%3d  ", day);
-                strncat(line, dayStr, MAX_LINE_LENGTH - strlen(line) - 1);
-                printf("%3d  ", day);
-                if ((startDay + day) % 7 == 0){
-                    lcd_disp_ascii16x8(x, y, line, BLUE_COLOR);
-                    printf("\n");
-                    line[0] = '\0';
-                    y += 20;
-                }    
-            }
-            lcd_disp_ascii16x8(x, y, line, BLUE_COLOR);
-            y+=40;
-        }else if(m <= 8 && m>4){
-            x += 200;
-            snprintf(string, sizeof(string),"%d        %-10s", year, months[m]);
-            lcd_disp_ascii16x8(x, y, string, BLUE_COLOR);
-            y += 20;
-            lcd_disp_ascii16x8(x, y, "Sun  Mon  Tue  Wed  Thu  Fri  Sat  ", BLUE_COLOR);
-            printf("Sun  Mon  Tue  Wed  Thu  Fri  Sat  \n");
-            y += 20;
-            char *line = (char *)malloc(MAX_LINE_LENGTH); // 分配足够的空间
-            if (!line) {
-                fprintf(stderr, "Memory allocation failed\n");
-                return;
-            }
-            line[0] = '\0';
-        
-            for (i = 0; i < startDay; i++) {
-                strcat(line, "     ");
-            }
-            int day;
-            for (day = 1; day <= days; day++) {
-                char dayStr[6];
-                snprintf(dayStr, sizeof(dayStr), "%3d  ", day);
-                strncat(line, dayStr, MAX_LINE_LENGTH - strlen(line) - 1);
-                printf("%3d  ", day);
-                if ((startDay + day) % 7 == 0){
-                    lcd_disp_ascii16x8(x, y, line, BLUE_COLOR);
-                    printf("\n");
-                    line[0] = '\0';
-                    y += 20;
-                }    
-            }
-            lcd_disp_ascii16x8(x, y, line, BLUE_COLOR);
-            y+=40;
-        }else{
-            x += 200;
-            snprintf(string, sizeof(string),"%d        %-10s", year, months[m]);
-            lcd_disp_ascii16x8(x, y, string, BLUE_COLOR);
-            y += 20;
-            lcd_disp_ascii16x8(x, y, "Sun  Mon  Tue  Wed  Thu  Fri  Sat  ", BLUE_COLOR);
-            printf("Sun  Mon  Tue  Wed  Thu  Fri  Sat  \n");
-            y += 20;
-            char *line = (char *)malloc(MAX_LINE_LENGTH); // 分配足够的空间
-            if (!line) {
-                fprintf(stderr, "Memory allocation failed\n");
-                return;
-            }
-            line[0] = '\0';
-        
-            for (i = 0; i < startDay; i++) {
-                strcat(line, "     ");
-            }
-            int day;
-            for (day = 1; day <= days; day++) {
-                char dayStr[6];
-                snprintf(dayStr, sizeof(dayStr), "%3d  ", day);
-                strncat(line, dayStr, MAX_LINE_LENGTH - strlen(line) - 1);
-                printf("%3d  ", day);
-                if ((startDay + day) % 7 == 0){
-                    lcd_disp_ascii16x8(x, y, line, BLUE_COLOR);
-                    printf("\n");
-                    line[0] = '\0';
-                    y += 20;
-                }    
-            }
-            lcd_disp_ascii16x8(x, y, line, BLUE_COLOR);
-            y+=40;
+        snprintf(string, sizeof(string),"%d        %-10s", year, months[m]);
+        lcd_disp_ascii16x8(x, y, string, BLUE_COLOR);
+        y += 20;
+        lcd_disp_ascii16x8(x, y, "Sun  Mon  Tue  Wed  Thu  Fri  Sat  ", BLUE_COLOR);
+        printf("Sun  Mon  Tue  Wed  Thu  Fri  Sat  \n");
+        y += 20;
+        char *line = (char *)malloc(MAX_LINE_LENGTH); // 分配足够的空间
+        if (!line) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return;
         }
-
-    }	
+        line[0] = '\0';
+    
+        for (i = 0; i < startDay; i++) {
+            strcat(line, "     ");
+        }
+        int day;
+        for (day = 1; day <= days; day++) {
+            char dayStr[6];
+            snprintf(dayStr, sizeof(dayStr), "%3d  ", day);
+            strncat(line, dayStr, MAX_LINE_LENGTH - strlen(line) - 1);
+            printf("%3d  ", day);
+            if ((startDay + day) % 7 == 0){
+                lcd_disp_ascii16x8(x, y, line, BLUE_COLOR);
+                printf("\n");
+                line[0] = '\0';
+                y += 20;
+            }    
+        }
+        lcd_disp_ascii16x8(x, y, line, BLUE_COLOR);
+        free(line);
+        y+=40;
+    }
 }
 
 void month_input(){
