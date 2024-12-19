@@ -156,6 +156,7 @@ void printCalendar(int year,int	month){
         }    
     }
     lcd_disp_ascii16x8(x, y, line, BLUE_COLOR);
+    printf("\n");
 }
 
 void printCalendarlist(int year){
@@ -207,6 +208,7 @@ void printCalendarlist(int year){
             }    
         }
         lcd_disp_ascii16x8(x, y, line, BLUE_COLOR);
+        printf("\n");
         free(line);
         y+=40;
     }
@@ -253,13 +255,14 @@ int main(int argc, char **argv){
     }
     printf("The framebuffer device was mapped to memory successfully.\n");
 
-    memset(fbp,0xff,screensize);
-    printCalendar(year, month);
+    // memset(fbp,0xff,screensize);
+    // printCalendar(year, month);
     xmax = vinfo.xres;
     ymax = vinfo.yres;
 	
 
-
+    memset(fbp,0xff,screensize);
+    printCalendar(year, month);
     while (1) {
         printf("Enter input (or 'help' for assistance): ");
         fgets(input, sizeof(input), stdin);
