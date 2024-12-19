@@ -114,9 +114,6 @@ int dayOfWeek(int year, int month, int day) {
 }
 
 void printCalendar(int year,int	month){
-//	int year = 2024;
-//	int month = 12;
-
 	char string[40];
 	int startDay = dayOfWeek(year,month,1);
 	int days = getDaysInMonth(year, month);
@@ -215,23 +212,12 @@ void printCalendarlist(int year){
     }
 }
 
-void month_input(){
-    int month;
-    char buffer[256];
-    printf("Please enter month 1-12,直接按空格显示所有月份：");
-    int temp = scanf("%d",&month);
-    if(fgets(buffer,sizeof(buffer),stdin)){
-        if(temp != 1 && buffer[0] == '\n'){
-
-        }
-    }
-}
-
 int main(int argc, char **argv){
 	int fbfd = 0;
     struct fb_var_screeninfo vinfo;
     struct fb_fix_screeninfo finfo;
     long int screensize = 0;
+    char input[100];
     int year, month;
     get_current_year_month(&year, &month);
 
@@ -267,20 +253,63 @@ int main(int argc, char **argv){
     }
     printf("The framebuffer device was mapped to memory successfully.\n");
 
-    // memset(fbp,0xff,screensize);
-    // printCalendar(year, month);
+    memset(fbp,0xff,screensize);
+    printCalendar(year, month);
     xmax = vinfo.xres;
     ymax = vinfo.yres;
 	
-	// while(1){
-		// printf("Enter year and month (yyyy mm): ");
-    	// scanf("%d %d", &year, &month);
-    	memset(fbp,0xff,screensize);
-    	// printCalendar(year, month);
-        printCalendarlist(year);
-	// }
-//	printCalendar();
-	//lcd_disp_ascii16x8(78,66+18+18, "EIC School,HUST 2020", BLUE_COLOR); 
+
+
+    while (1) {
+        printf("Enter input (or 'help' for assistance): ");
+        fgets(input, sizeof(input), stdin);
+        input[strcspn(input, "\n")] = 0; // Remove the newline character
+
+        if (strcmp(input, "exit") == 0) {
+            printf("Exiting program.\n");
+            break;
+        } else if (strcmp(input, "help") == 0) {
+            printf("Enter in the format 'YYYY MM' for year and month.\n");
+            printf("Enter 'YYYY' for just the year.\n");
+            printf("Enter 'D' to increment the month by 1.\n");
+            printf("Enter 'A' to decrement the month by 1.\n");
+            printf("Enter 'W' to increment the year by 1.\n");
+            printf("Enter 'S' to decrement the year by 1.\n");
+            continue;
+        } else if (sscanf(input, "%d %d", &year, &month) == 2) {
+            memset(fbp,0xff,screensize);
+            printCalendar(year,month);
+        } else if (sscanf(input, "%d", &year) == 1) {
+            memset(fbp,0xff,screensize);
+            printCalendarlist(year);
+        } else if (strcmp(input, "D") == 0) {
+            month += 1;
+            if (month > 12) {
+                month = 1;
+                year += 1;
+            }
+            memset(fbp,0xff,screensize);
+            printCalendar(year,month);
+        } else if (strcmp(input, "A") == 0) {
+            month -= 1;
+            if (month < 1){
+                month = 12;
+                year -= 1;
+            }
+            memset(fbp,0xff,screensize);
+            printCalendar(year,month);
+        } else if (strcmp(input, "W") == 0) {
+            year += 1;
+            memset(fbp,0xff,screensize);
+            printCalendar(year,month);
+        } else if (strcmp(input, "S") == 0) {
+            year -= 1;
+            memset(fbp,0xff,screensize);
+            printCalendar(year,month);
+        } else {
+            printf("Input error. Try again.\n");
+        }
+    }
 	munmap(fbp, screensize);
     close(fbfd);
     return 0;
