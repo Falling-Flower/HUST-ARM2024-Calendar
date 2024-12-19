@@ -77,7 +77,7 @@ void lcd_disp_ascii16x8(int x,int y,char *s,int color)
     }
 }
 
-void get_current_year_month(int *year, int *month) {
+void get_current_year_month(int *year, int *month, int *day) {
     // 获取当前日历时间
     time_t rawtime;
     struct tm *timeinfo;
@@ -88,6 +88,7 @@ void get_current_year_month(int *year, int *month) {
     // 将年份和月份赋值给传入的指针参数
     *year = timeinfo->tm_year + 1900; // tm_year是自1900年以来的年数
     *month = timeinfo->tm_mon + 1;    // tm_mon是从0开始的月份索引
+    *day = timeinfo->tm_mday;
 }
 
 //判断闰年 
@@ -114,11 +115,12 @@ int dayOfWeek(int year, int month, int day) {
 }
 
 void printCalendar(int year,int	month){
+    int myday, mymonth, myyear;
 	char string[40];
 	int startDay = dayOfWeek(year,month,1);
 	int days = getDaysInMonth(year, month);
 	int x, y, i;
-	
+	get_current_year_month(&myyear, &mymonth, &myday);
 	x = 100;
 	y = 100;
 	
@@ -145,8 +147,14 @@ void printCalendar(int year,int	month){
 	int day;
     for (day = 1; day <= days; day++) {
     	char dayStr[6];
-    	snprintf(dayStr, sizeof(dayStr), "%3d  ", day);
-    	strncat(line, dayStr, MAX_LINE_LENGTH - strlen(line) - 1);
+        if(year==myyear && month==mymonth && day==myday){
+            snprintf(dayStr, sizeof(dayStr), "%3d* ", day);
+    	    strncat(line, dayStr, MAX_LINE_LENGTH - strlen(line) - 1);
+        }else{
+            snprintf(dayStr, sizeof(dayStr), "%3d  ", day);
+    	    strncat(line, dayStr, MAX_LINE_LENGTH - strlen(line) - 1);
+        }
+    	
         printf("%3d  ", day);
         if ((startDay + day) % 7 == 0){
 			lcd_disp_ascii16x8(x, y, line, BLUE_COLOR);
@@ -164,7 +172,8 @@ void printCalendarlist(int year){
 	int startDay;
 	int days;
 	int x, y, i,m;
-	
+	int myday, mymonth, myyear;
+    get_current_year_month(&myyear, &mymonth, &myday);
 	x = 50;
 	y = 50;
 	for(m = 1;m <= 12;m++){
@@ -197,8 +206,13 @@ void printCalendarlist(int year){
         int day;
         for (day = 1; day <= days; day++) {
             char dayStr[6];
+            if(year==myyear && m==mymonth && day==myday){
+            snprintf(dayStr, sizeof(dayStr), "%3d* ", day);
+    	    strncat(line, dayStr, MAX_LINE_LENGTH - strlen(line) - 1);
+            }else{
             snprintf(dayStr, sizeof(dayStr), "%3d  ", day);
-            strncat(line, dayStr, MAX_LINE_LENGTH - strlen(line) - 1);
+    	    strncat(line, dayStr, MAX_LINE_LENGTH - strlen(line) - 1);
+            }
             printf("%3d  ", day);
             if ((startDay + day) % 7 == 0){
                 lcd_disp_ascii16x8(x, y, line, BLUE_COLOR);
@@ -220,8 +234,8 @@ int main(int argc, char **argv){
     struct fb_fix_screeninfo finfo;
     long int screensize = 0;
     char input[100];
-    int year, month;
-    get_current_year_month(&year, &month);
+    int year, month, today;
+    get_current_year_month(&year, &month, &today);
 
     //打开文件读写 
     fbfd = open("/dev/fb0", O_RDWR);
